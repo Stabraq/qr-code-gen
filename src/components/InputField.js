@@ -9,6 +9,7 @@ export const InputField = ({
   defaultValue,
   hideLabel,
   value,
+  maxLength,
 }) => {
   return (
     <div
@@ -25,6 +26,7 @@ export const InputField = ({
         step={step || 1}
         defaultValue={defaultValue}
         value={value}
+        maxLength={maxLength}
       />
     </div>
   );

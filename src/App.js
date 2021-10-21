@@ -33,19 +33,58 @@ const App = () => {
     eyeradius_2_inner_1: 0,
     eyeradius_2_inner_2: 0,
     eyeradius_2_inner_3: 50,
+    fgColor: '#ff5500',
+    size: '350',
+    value: 'https://stabraq.netlify.app/preferences/main/user/',
+    ecLevel: 'Q',
+    qrStyle: 'dots',
+    logoImage: 'logo.png',
+    logoWidth: 130,
+    mobile: '',
   });
   const handleChange = ({ target }) => {
-    setState((prevState) => ({ ...prevState, [target.name]: target.value }));
+    setState((prevState) => ({
+      ...prevState,
+      [target.name]: target.value,
+    }));
+
+    if (target.name === 'value') {
+      setState((prevState) => ({
+        ...prevState,
+        value: `https://stabraq.netlify.app/preferences/main/user/?mobile=${target.value}`,
+        mobile: target.value,
+      }));
+    }
   };
   const handleDownload = () => {
     html2canvas(document.querySelector('#react-qrcode-logo')).then(function (
       canvas
     ) {
       const link = document.createElement('a');
-      link.download = 'react-qrcode-logo.png';
+      link.download = `qrcode-${state.mobile}.png`;
       link.href = canvas.toDataURL();
       link.click();
     });
+  };
+
+  const sendSMS = () => {
+    html2canvas(document.querySelector('#react-qrcode-logo')).then(
+      async function (canvas) {
+        const base64url = canvas.toDataURL();
+        console.log(base64url);
+        const blob = await (await fetch(base64url)).blob();
+        const file = new File([blob], `qrcode-${state.mobile}.png`, {
+          type: blob.type,
+        });
+        navigator.share({
+          title: 'Hello',
+          text: 'Check out this image!',
+          files: [file],
+        });
+
+        // window.open(`https://wa.me/201002485001?text=${link}`);
+      }
+    );
   };
   const buildEyeRadiusInput = (id) => {
     return (
@@ -80,11 +119,13 @@ const App = () => {
               <InputField
                 name='value'
                 type='text'
+                maxLength={11}
                 handleChange={handleChange}
               />
               <SelectField
                 name='ecLevel'
                 options={['L', 'M', 'Q', 'H']}
+                defaultValue={'Q'}
                 handleChange={handleChange}
               />
               <CheckboxField name='enableCORS' handleChange={handleChange} />
@@ -93,7 +134,8 @@ const App = () => {
                 type='range'
                 handleChange={handleChange}
                 min={100}
-                max={250}
+                max={350}
+                defaultValue={350}
               />
               <InputField
                 name='quietZone'
@@ -158,6 +200,7 @@ const App = () => {
               <SelectField
                 name='qrStyle'
                 options={['squares', 'dots']}
+                defaultValue={'dots'}
                 handleChange={handleChange}
               />
             </div>
@@ -272,6 +315,9 @@ const App = () => {
       </div>
       <button type='button' onClick={handleDownload} style={{ margin: '20px' }}>
         Download QR Code
+      </button>
+      <button type='button' onClick={sendSMS} style={{ margin: '20px' }}>
+        Send QR Code
       </button>
       <div style={{ marginLeft: '15px' }}>
         <p>State snapshot (debug purposes)</p>

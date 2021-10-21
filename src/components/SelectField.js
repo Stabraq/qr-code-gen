@@ -1,11 +1,11 @@
 import * as React from 'react';
-export const SelectField = ({ name, options, handleChange }) => {
+export const SelectField = ({ name, options, defaultValue, handleChange }) => {
   return (
     <div
       style={{ display: 'flex', flexDirection: 'column', marginBottom: '6px' }}
     >
       <label>{name}</label>
-      <select name={name} onChange={handleChange}>
+      <select name={name} defaultValue={defaultValue} onChange={handleChange}>
         {options.map((option, index) => (
           <option key={index} value={option}>
             {option}
